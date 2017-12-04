@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>街道</title>
+    <script src="../js/three.js"></script>
+    <script src="../js/OrbitControls.js"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div id="one">
+    </div>
+    <script>
+        // 设置场景
+        var scene = new THREE.Scene();
+        // 设置相机
+        var width = document.getElementById("one").clientWidth;
+        var height  = document.getElementById("one").clientHeight;
+        var camera = new THREE.PerspectiveCamera(100,width/height,0.1,1000);
+        // 设置相机位置
+        camera.position.x = 10;
+        camera.position.y = 0;
+        camera.position.z = 30;
+        camera.lookAt(scene.position);
+        // 设置渲染器
+        var renderer = new THREE.WebGLRenderer({antialas:true});
+        renderer.setSize(width,height);
+        renderer.setClearColor(0xeeeeee);
+        document.getElementById("one").appendChild(renderer.domElement);
+
+        // 设置灯光
+        var light = new THREE.PointLight(0xffffff);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0xcccccc));
+        // 测试加载立方体
+        var geometry = new THREE.BoxGeometry(4,4,4);
+        var material = new THREE.MeshBasicMaterial(0xcccccc);
+        var mesh = new THREE.Mesh(geometry,material);
+        scene.add(mesh);
+        mesh.position.x = -10;
+        mesh.position.y = 0;
+        mesh.position.z = -10;
+        // 加载png背景
+        var path = '../images/';
+        var format = '.png';
+        var urls = [
+            path+"px"+format,path+"nx"+format,
+            path+"py"+format,path+"ny"+format,
+            path+"pz"+format,path+"nz"+format
+        ]
+        var textureCube = new THREE.CubeTextureLoader().load(urls);
+        scene.background = textureCube;
+        // 加载透明水珠
+        // var spheres = [];
+        // var geometry = new THREE.SphereBufferGeometry(0.1,32,16);
+        // var material = new THREE.MeshBasicMaterial({color:0xffffff,envMap:textureCube});
+        // for ( var i = 0; i < 500; i ++ ) {
+        //     var mesh = new THREE.Mesh( geometry, material );
+        //     mesh.position.x = Math.random() * 10 - 5;
+        //     mesh.position.y = Math.random() * 10 - 5;
+        //     mesh.position.z = Math.random() * 10 - 5;
+        //     mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * 3 + 1;
+        //     scene.add( mesh );
+        //     spheres.push( mesh );
+        // }
+
+        // 加载控制器
+        var controls = new THREE.OrbitControls(camera);
+        controls.addEventListener('change',render);
+
+        // 实时渲染
+        render();
+        animate();
+        function render() {
+            renderer.render(scene,camera);
+        }
+        function animate() {
+            render();
+            requestAnimationFrame(animate);
+        }
+    </script>
+</body>
+</html>

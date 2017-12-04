@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>街道</title>
+    <script src="../js/three.js"></script>
+    <script src="../js/OrbitControls.js"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div id="one">
+</div>
+<script>
+    // 设置场景
+    var scene = new THREE.Scene();
+    // 设置相机
+    var width = document.getElementById("one").clientWidth;
+    var height  = document.getElementById("one").clientHeight;
+    var camera = new THREE.PerspectiveCamera(100,width/height,0.1,1000);
+    // 设置相机位置
+    camera.position.x = 30;
+    camera.position.y = 0;
+    camera.position.z = -15;
+    camera.lookAt(scene.position);
+    // 设置渲染器
+    var renderer = new THREE.WebGLRenderer({antialas:true});
+    renderer.setSize(width,height);
+    renderer.setClearColor(0xeeeeee);
+    document.getElementById("one").appendChild(renderer.domElement);
+
+    // 设置灯光
+    var light = new THREE.PointLight(0xffffff);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0xcccccc));
+    // 加载png背景
+    var path = '../images/';
+    var format = '.png';
+    var urls = [
+        path+"px"+format,path+"nx"+format,
+        path+"py"+format,path+"ny"+format,
+        path+"pz"+format,path+"nz"+format
+    ]
+    var textureCube = new THREE.CubeTextureLoader().load(urls);
+    scene.background = textureCube;
+
+    // 我就是要在这加载文字
+    var fontLoader = new THREE.FontLoader();
+    fontLoader.load("../fonts/helvetiker_bold.typeface.json",function(font){
+        init(font);
+        animate();
+    });
+    function init(font) {
+        // 文字
+        var text = 'You\'re the apple of my eyes';
+        var geometry = new THREE.TextGeometry(text,{
+            font:font,
+            size:40,
+            height:30,
+            curveSegments: 2
+        });
+        geometry.computeBoundingBox();
+        // 文字材质
+        var materials = [
+            new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, overdraw: 0.5 } ),
+            new THREE.MeshBasicMaterial( { color: 0x000000, overdraw: 0.5 } )
+        ];
+        var mesh = new THREE.Mesh(geometry,materials);
+        // mesh.scale.set(0.8,0.8,0.8);
+        mesh.position.x = -500;
+        mesh.position.y = 500;
+        mesh.position.z = 300;
+        mesh.rotation.set(-10,20,10);
+        scene.add(mesh);
+
+    }
+
+    // 加载控制器
+    var controls = new THREE.OrbitControls(camera);
+    controls.addEventListener('change',render);
+
+    function render() {
+        renderer.render(scene,camera);
+    }
+    function animate() {
+        render();
+        requestAnimationFrame(animate);
+    }
+</script>
+</body>
+</html>
