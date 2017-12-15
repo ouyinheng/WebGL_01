@@ -1,0 +1,29 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+#one {
+    width: 100%;
+    height: 662px;
+    background: #5A5A5A;
+    border: none;
+}
+html, body {
+    background-color: #000;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+}
+#info {
+    position: absolute;
+    top: 0px; width: 100%;
+    color: #ffffff;
+    padding: 5px;
+    font-family:Monospace;
+    font-size:13px;
+    font-weight: bold;
+    text-align:center;
+}
+a {
+    color: #ffffff;
+}

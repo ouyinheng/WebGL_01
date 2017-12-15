@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>请求有材质</title>
+    <script src="./js/three.js"></script>
+    <script src="./js/OBJLoader.js"></script>
+    <script src="./js/MTLLoader.js"></script>
+    <script src="./js/OrbitControls.js"></script>
+    <script src="./js/jquery.js"></script>
+    <script src="./js/ajax.js"></script>
+    <script src="./js/ringBuffer.js"></script>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div id="one">
+</div>
+<script>
+    // 设置场景
+    var scene = new THREE.Scene();
+    // 设置相机
+    var width = document.getElementById("one").clientWidth;
+    var height  = document.getElementById("one").clientHeight;
+    var camera = new THREE.PerspectiveCamera(50,width/height,0.1,1000);
+    // 设置相机位置
+    camera.position.x = 0;
+    camera.position.y = 10;
+    camera.position.z = 30;
+    camera.lookAt(scene.position);
+    // 设置渲染器
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width,height);
+    renderer.setClearColor(0xeeeeee);
+    document.getElementById("one").appendChild(renderer.domElement);
+
+    // 设置灯光
+    var light = new THREE.PointLight(0xcccccc);
+    // light.position.set(10,15,10);
+    light.position.set(10,145,10);
+    scene.add(light);
+    // scene.add(new THREE.AmbientLight(0xffffff));
+
+    // 加载obj模型
+    var objLoader = new THREE.OBJLoader();
+    var rb = new RingBuffer(3);
+    rb.init();
+    reqServer({a:""},false,function(data) {
+        // console.log(data);
+        rb.write(objLoader,data);
+    });
+    var obj = rb.read();
+    obj.scale.set(40,40,40);
+    scene.add(obj);
+    var mtlLoader = new THREE.MTLLoader();
+    // mtlLoader.setCrossOrigin = true;
+    // mtlLoader.setTexturePath()
+    mtlLoader.setPath("sourth/goku/")
+    mtlLoader.load("goku.mtl",function(mtl){
+        mtl.preload();
+        objLoader.setMaterials(mtl);
+    })
+    // 实时渲染
+    render();
+    animate();
+    function render() {
+        renderer.render(scene,camera);
+    }
+    function animate() {
+        render();
+        requestAnimationFrame(animate);
+    }
+
+
+    // 加载鼠标控制器（OrbitControls.js）
+    var controls = new THREE.OrbitControls(camera);
+    controls.addEventListener('change',render);
+
+</script>
+</body>
+</html>
